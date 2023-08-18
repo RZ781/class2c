@@ -27,9 +27,9 @@ uint32_t parse_u4(FILE* f) {
 
 cp_t parse_cp(FILE* f) {
 	cp_t const_pool;
-	const_pool.count = parse_u2(f) - 1;
+	const_pool.count = parse_u2(f);
 	const_pool.cp = calloc(sizeof(cp_info), const_pool.count);
-	for (int i=0; i < const_pool.count; i++) {
+	for (int i=1; i < const_pool.count; i++) {
 		cp_info entry;
 		entry.tag = parse_u1(f);
 		switch (entry.tag) {
@@ -88,6 +88,35 @@ attrs_t parse_attrs(FILE* f) {
 	return attrs;
 }
 
+fields_t parse_fields(FILE* f) {
+	fields_t fields;
+	fields.count = parse_u2(f);
+	fields.fields = calloc(sizeof(field_info), fields.count);
+	for (int i=0; i<fields.count; i++) {
+		field_info field;
+		field.access_flags = parse_u2(f);
+		field.name_index = parse_u2(f);
+		field.descriptor = parse_u2(f);
+		field.attrs = parse_attrs(f);
+		fields.fields[i] = field;
+	}
+	return fields;
+}
+methods_t parse_methods(FILE* f) {
+	methods_t methods;
+	methods.count = parse_u2(f);
+	methods.methods = calloc(sizeof(method_info), methods.count);
+	for (int i=0; i<methods.count; i++) {
+		method_info method;
+		method.access_flags = parse_u2(f);
+		method.name_index = parse_u2(f);
+		method.descriptor = parse_u2(f);
+		method.attrs = parse_attrs(f);
+		methods.methods[i] = method;
+	}
+	return methods;
+}
+
 class_file_t parse_class(FILE* f) {
 	class_file_t jclass;
 	uint32_t magic = parse_u4(f);
@@ -105,8 +134,8 @@ class_file_t parse_class(FILE* f) {
 	jclass.interfaces = calloc(sizeof(uint16_t), jclass.interface_count);
 	for (int i=0; i<jclass.interface_count; i++)
 		jclass.interfaces[i] = parse_u2(f);
-	// jclass.fields  = parse_fields(f);
-	// jclass.methods = parse_methods(f);
-	// jclass.attrs   = parse_attrs(f);
+	jclass.fields  = parse_fields(f);
+	jclass.methods = parse_methods(f);
+	jclass.attrs   = parse_attrs(f);
 	return jclass;
 }

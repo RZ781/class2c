@@ -14,4 +14,21 @@ typedef struct {
 	attr_info* attrs;
 } attrs_t;
 
+typedef struct {
+	uint16_t start_pc;
+	uint16_t end_pc;
+	uint16_t handler_pc;
+	uint16_t catch_type;
+} exception_info;
+
+typedef struct {
+	uint16_t stack_size;
+	uint16_t locals;
+	uint32_t code_length;
+	uint8_t* bytecode;
+	uint16_t exception_count;
+	exception_info* exception_table;
+	attrs_t attrs;
+} code_attr;
+
 #endif
