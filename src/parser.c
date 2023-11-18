@@ -60,7 +60,8 @@ cp_t parse_cp(FILE* f) {
 				break;
 			case CONSTANT_Utf8:
 				entry.info.u2[0] = parse_u2(f);
-				entry.ptr = malloc(entry.info.u2[0]);
+				entry.ptr = malloc(entry.info.u2[0] + 1);
+				entry.ptr[entry.info.u2[0]] = 0;
 				for (int i=0; i<entry.info.u2[0]; i++)
 					entry.ptr[i] = parse_u1(f);
 				break;
@@ -102,6 +103,7 @@ fields_t parse_fields(FILE* f) {
 	}
 	return fields;
 }
+
 methods_t parse_methods(FILE* f) {
 	methods_t methods;
 	methods.count = parse_u2(f);

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "parser.h"
 #include "compiler.h"
+#include "data.h"
 
 int main(int argc, char** argv) {
 	if (argc < 2) {
@@ -16,4 +17,5 @@ int main(int argc, char** argv) {
 	class_file_t main_class = parse_class(f);
 	fclose(f);
 	compile_class(main_class, "output/src/", "output/include/");
+	free_class(main_class);
 }
